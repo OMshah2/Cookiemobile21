@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie clicker</title>
+    <style>
+        body {
+            background-color: rgb(70, 54, 35);
+            color: white;
+            padding: none;
+            margin: none;
+        }
+
+        .auto-clicker-button {
+            background-color: black;
+            color: white;
+            border: none;
+            border-radius: 55%;
+            width: 31%;
+            font-size: 3vw;
+            height: 51%;
+            padding: 21px;
+            font-family: comic sans-serif;
+            border: 3px;
+            border-color: grey;
+        }
+
+        .auto-clicker-button:hover {
+            transform: scale(1.1); /* Increase the size on hover */
+        }
+
+        #cookieButton {
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        #cookieButton:hover {
+            transform: scale(1.1); /* Increase the size on hover */
+        }
+
+        #cookieImg.clicked {
+            transform: scale(0.9); /* Decrease the size when clicked */
+        }
+    </style>
+</head>
+<body>
+    <center>
+        <h1 style="font-family: comic sans">Cookie clicker for phone</h1>
+    </center>
+    <div class="cookiebutton">
+        <button id="cookieButton" style="background-color: transparent; border: none;">
+            <img id="cookieImg" src="cookie.png" alt="Cookie" width="50%" height="50%">
+        </button>
+    </div>
+    <div>
+        <button id="autoClickerButton" onclick="buyAutoClicker('Cursor')" style="margin-top: 11%;" class="auto-clicker-button">Buy Cursor (Cost: 75 cookies | 1 click every 2 seconds)</button>
+        <button id="motherButton" onclick="buyAutoClicker('Mother')" class="auto-clicker-button">Buy Mother (Cost: 125 cookies | 2.5 cookies per second)</button>
+        <button id="bakeryButton" onclick="buyAutoClicker('Bakery')" class="auto-clicker-button">Buy Bakery (Cost: 200 cookies | 6 cookies per second)</button>
+    
+    </div>
+    <center>
+        <p style="font-size: 8vw;">Cookie Count: <span id="cookieCounter">0</span></p>
+        <p style="font-size: 8vw;">Total Auto-Clicker Cookies: <span id="autoClickerCounter">0</span></p>
+    </center>
+
+    <script>
+        const cookieImg = document.getElementById('cookieImg');
+        const cookieCounter = document.getElementById('cookieCounter');
+        const autoClickerButton = document.getElementById('autoClickerButton');
+        const bakeryButton = document.getElementById('bakeryButton');
+        const motherButton = document.getElementById('motherButton');
+        const autoClickerCounter = document.getElementById('autoClickerCounter');
+
+        let count = 0;
+        let autoClickers = {
+            'Cursor': 0,
+            'Bakery': 0,
+            'Mother': 0
+        };
+
+        let totalAutoClickerCookies = 0;
+
+        function handleClick(event) {
+            event.stopPropagation();
+
+            count++;
+            cookieCounter.textContent = count;
+
+            cookieImg.classList.add('clicked');
+
+            setTimeout(() => {
+                cookieImg.classList.remove('clicked');
+            }, 100);
+        }
+
+        function buyAutoClicker(type) {
+            const costs = {
+                'Cursor': 75,
+                'Bakery': 200,
+                'Mother': 125
+            };
+
+            const cost = Math.ceil(costs[type] * Math.pow(1.11, autoClickers[type]));
+
+            if (count >= cost) {
+                count -= cost;
+                autoClickers[type]++;
+                cookieCounter.textContent = count;
+                updateAutoClickerDisplay();
+                startAutoClicker(type);
+            } else {
+                alert("You don't have enough cookies to buy an auto-clicker!");
+            }
+        }
+
+        function startAutoClicker(type) {
+            setInterval(() => {
+                handleClick({stopPropagation: () => {}});
+                updateAutoClickerDisplay();
+            }, 1000); // Display as if it's every 1 second
+        }
+
+        function updateAutoClickerDisplay() {
+            autoClickerButton.textContent = `Buy Cursor (Cost: ${Math.ceil(75 * Math.pow(1.11, autoClickers['Cursor']))} cookies | ${autoClickers['Cursor'] / 2} clicks per second)`;
+            bakeryButton.textContent = `Buy Bakery (Cost: ${Math.ceil(200 * Math.pow(1.11, autoClickers['Bakery']))} cookies | ${autoClickers['Bakery'] * 6} cookies per second)`;
+            motherButton.textContent = `Buy Mother (Cost: ${Math.ceil(125 * Math.pow(1.11, autoClickers['Mother']))} cookies | ${autoClickers['Mother'] * 2.5} cookies per second)`;
+            
+            // Calculate total auto-clicker cookies
+            totalAutoClickerCookies = (autoClickers['Cursor'] * 0.5) + (autoClickers['Bakery'] * 6) + (autoClickers['Mother'] * 2.5);
+            autoClickerCounter.textContent = totalAutoClickerCookies;
+        }
+
+        cookieImg.addEventListener('click', handleClick);
+
+        updateAutoClickerDisplay();
+    </script>
+</body>
+</html>
